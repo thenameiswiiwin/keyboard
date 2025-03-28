@@ -1,134 +1,129 @@
-# Lily58 Custom Keyboard Configuration
+# My personal keyboard
 
-## Overview
+HELL0 HUY. Interface is a GUI based en [Serial Experiments Lain](https://en.wikipedia.org/wiki/Serial_Experiments_Lain). Turn your [Lily58](https://github.com/kata0510/Lily58) keyboard into a Navi computer with its own Copland OS.
 
-This repository contains my personal QMK firmware configuration for the Lily58 split ergonomic keyboard. The Lily58 is a 58-key split keyboard with a 6×4+4 column-staggered layout, designed for ergonomic typing and programming.
+Ready to dive into the Wired ?
 
-### Features
+HELL0 NAVI provides interactive animations for both sides :
 
-- **Custom Keymap**: Optimized layout for developers with intuitive access to symbols and navigation
-- **Advanced Tap Dance**: Multi-function keys for increased efficiency without additional layers
-- **OLED Support**: Custom OLED displays showing active layer and typing information
-- **Ergonomic Design**: Split layout minimizes wrist strain during extended typing sessions
+- a scope on left side for burst, WPM and active layer
+- a ring on right side for the last key stroke
 
-## Layout
+## Typing animation
 
-The keymap is organized into four layers:
+The scope displays your burst time on a chart. The WPM is represented by an horizontal line.
 
-1. **QWERTY**: Base typing layer with standard layout and strategic modifier placement
-2. **LOWER**: Numbers, navigation, and frequently used IDE shortcuts
-3. **RAISE**: Symbols, brackets, and special characters for coding
-4. **ADJUST**: Function keys, media controls, and keyboard settings
+The ring display the last letter in the upper frame. Each time you enter a key, the Navi searches into the circular database and locks the position. A special animation is displayed when Enter, Backspce or Escape are struck.
 
-### Layer Visualization
+<img src="https://imgur.com/Yf7D6UN.gif" height="400" >
 
-**QWERTY Layer**
+## Startup animation
+
+Your Navi boots when it leaves the sleep mode. The animation can be canceled by typing.
+
+<img src="https://imgur.com/EXU92Ev.gif" height="400" >
+
+## Waking up animation
+
+After a period of inactivity, the scope and the ring turn off and the Navi runs in Idle mode. A new key stroke wakes them up.
+
+<img src="https://imgur.com/9GWa7rR.gif" height="400" >
+
+## Idle animation
+
+The Copland OS is still in beta test. After a while, some visual glitches will occur.
+
+<img src="https://imgur.com/eKZ7qgC.gif" height="400" >
+
+## Shutdown animation
+
+The Navi runs in sleep mode after 10 seconds in Idle mode. A nice (and difficul to render in a gif) animation is run. The OLED display turns off.
+
+# How to build & flash
+
+You need to flash each side with a specific version based on config.h configuration.
+
+## Left side (master)
+
+IS_RIGHT needs to be commented in config.h
 
 ```
-╭──────┬──────┬──────┬──────┬──────┬──────╮                ╭──────┬──────┬──────┬──────┬──────┬──────╮
-│      │      │      │      │      │      │                │      │      │      │      │      │      │
-├──────┼──────┼──────┼──────┼──────┼──────┤                ├──────┼──────┼──────┼──────┼──────┼──────┤
-│  TAB │   Q  │   W  │   E  │   R  │   T  │                │   Y  │   U  │   I  │   O  │   P  │   -  │
-├──────┼──────┼──────┼──────┼──────┼──────┤                ├──────┼──────┼──────┼──────┼──────┼──────┤
-│ SHIFT│   A  │   S  │   D  │   F  │   G  │                │   H  │   J  │   K  │   L  │   '  │   ;  │
-├──────┼──────┼──────┼──────┼──────┼──────┼──────╮  ╭──────┼──────┼──────┼──────┼──────┼──────┼──────┤
-│  ALT │   Z  │   X  │   C  │   V  │   B  │      │  │      │   N  │   M  │  TD1 │  TD2 │   /  │ ENTER│
-╰──────┴──────┴──────┼──────┼──────┼──────┼──────┤  ├──────┼──────┼──────┼──────┼──────┴──────┴──────╯
-                     │      │  GUI │LOWER │ SPACE│  │ CTRL │RAISE │ BSPC │      │
-                     ╰──────┴──────┴──────┴──────╯  ╰──────┴──────┴──────┴──────╯
+#define IS_LEFT 1
+//#define IS_RIGHT 1
 ```
 
-## Special Features
+Connect the left side and flash
 
-### Tap Dance Keys
+## Right side (slave)
 
-This keymap uses QMK's tap dance feature to enable multi-function keys:
+Comment IS_LEFT and uncomment IS_RIGHT in config.h
 
-- `TD1`: Single tap = `,` | Double tap = `<`
-- `TD2`: Single tap = `.` | Double tap = `>`
+```
+//#define IS_LEFT 1
+#define IS_RIGHT 1
+```
 
-### OLED Configuration
+Connect the right side and flash
 
-The OLED displays show:
+# Customization
 
-- Active layer indicator
-- Logo on the master side
-- Key press visualization
-- WPM counter
+## Logo
 
-## Installation
+Logo can be change in navi_logo.c.
+The new logo must be 32x32 pixels.
 
-### Prerequisites
+```
+static void render_logo_clean(void) {
+    // your logo here
+    static const char PROGMEM logo_raw[] = {
+        0, 0, 0, 0, 0, 0, 128, 128, 0, 0, 128, 128, 192, 192, 204, 222, 222, 204, 192, 192, 128, 0, 0, 0, 128, 128, 0, 0,
+        0, 0, 0, 0, 192, 240, 248, 28, 14, 7, 3, 249, 252, 255, 15, 7, 3, 225, 241, 241, 241, 241, 225, 3, 7, 15, 255, 252,
+        249, 3, 7, 14, 28, 248, 240, 192, 192, 227, 231, 206, 28, 56, 112, 99, 15, 31, 60, 120, 240, 225, 227, 3, 3, 227,
+        225, 240, 120, 60, 31, 15, 103, 112, 56, 28, 206, 231, 227, 192, 0, 1, 1, 0, 0, 0, 56, 120, 96, 192, 192, 192,
+        96, 127, 63, 0, 0, 63, 127, 96, 192, 192, 192, 96, 120, 56, 0, 0, 0, 1, 1, 0,
+    };
+    oled_write_raw_P(logo_raw, sizeof(logo_raw));
+}
+```
 
-- [QMK Firmware](https://qmk.fm/)
-- [QMK MSYS](https://msys.qmk.fm/) (Windows) or QMK environment (macOS/Linux)
+## Layer names
 
-### Steps
+The current version handle 3 differents layers. Names can be changed in layer_frame.h.
 
-1. Clone the QMK firmware repository:
+```
+// layer name : must be 3 chars
+#define LAYER_NAME_0 "ABC"
+#define LAYER_NAME_1 "NAV"
+#define LAYER_NAME_2 "SPE"
+```
 
-   ```bash
-   git clone https://github.com/qmk/qmk_firmware.git
-   cd qmk_firmware
-   ```
+## Timing
 
-2. Copy the custom files to your QMK directory:
+You can tweak states timing in gui_state.h.
 
-   ```bash
-   # Create your keymap directory if it doesn't exist
-   mkdir -p keyboards/lily58/keymaps/thenameiswiiwin
+```
+// states timing
+#define BOOTING_TIME_TRESHOLD 7000
+#define WAKING_UP_TIME_TRESHOLD 300
+#define IDLE_TIME_TRESHOLD 4000
+#define HALTING_TIME_TRESHOLD IDLE_TIME_TRESHOLD + 6000
+#define SLEEP_TIME_TRESHOLD HALTING_TIME_TRESHOLD + 8000
+```
 
-   # Copy files from this repository
-   cp -r path/to/this/repo/keymaps/thenameiswiiwin/* keyboards/lily58/keymaps/thenameiswiiwin/
-   ```
+## Need space ?
 
-3. Compile the firmware:
+Boot and gliches can be commented in config.h
 
-   ```bash
-   qmk compile -kb lily58 -km thenameiswiiwin
-   ```
+```
+// states timing
+// logo glitch
+//#define WITH_GLITCH
+// boot sequence
+//#define WITH_BOOT
+```
 
-4. Flash the firmware to your keyboard:
-   ```bash
-   qmk flash -kb lily58 -km thenameiswiiwin
-   ```
+![My Navi](https://imgur.com/eYkgoZJ.png)
 
-## Customization
-
-### Modifying Keymap
-
-Edit the `keymap.c` file to change your key layout. The file is organized by layers, with each layer defined in the `keymaps[][]` array.
-
-### Tap Dance Configuration
-
-Modify the `dance.c` file to change or add tap dance definitions.
-
-### OLED Display
-
-Customize the OLED display by editing the `oled.c` file.
-
-## Build Tips
-
-- Ensure both halves of the keyboard are connected when flashing
-- Reset the keyboard before flashing (press reset button or defined reset key)
-- If you encounter issues with OLED, ensure the OLED drivers are properly enabled in `rules.mk`
-
-## Hardware
-
-This configuration is designed for the Lily58 Pro with:
-
-- Elite-C or Pro Micro controllers
-- 128x32 OLED displays
-- RGB underglow (optional)
-- Hot-swap sockets for MX-style switches
-
-## Resources
-
-- [Lily58 GitHub Repository](https://github.com/kata0510/Lily58)
-- [QMK Documentation](https://docs.qmk.fm/)
-- [QMK Configurator](https://config.qmk.fm/)
-- [Keyboard Layout Editor](http://www.keyboard-layout-editor.com/)
-
----
-
-_"Life is too short for bad keyboards."_
+> Keyboard : https://github.com/kata0510/Lily58
+>
+> Case : https://github.com/BoardSodie/Lily58-Acrylic-Case
